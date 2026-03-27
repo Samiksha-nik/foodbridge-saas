@@ -33,7 +33,7 @@ export default function NGORegistration() {
   useEffect(() => {
     const load = async () => {
       try {
-        const u = await authApi.getMe();
+        const u = await authApi.getMe({ timeoutMs: 15000 });
         if (u?.role !== "ngo") {
           navigate(createPageUrl("RoleSelection"), { replace: true });
           return;
@@ -55,8 +55,8 @@ export default function NGORegistration() {
           address: u.ngoAddress || "",
           bio: u.ngoDescription || "",
         }));
-      } catch (_) {
-        navigate(createPageUrl("RoleSelection"), { replace: true });
+      } catch (err) {
+        setError(err?.message || "Failed to load your account. Please try again.");
         return;
       } finally {
         setLoadingUser(false);
@@ -107,6 +107,33 @@ export default function NGORegistration() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
+        <Card className="p-6 max-w-md w-full border border-gray-100">
+          <h2 className="text-lg font-semibold text-gray-900">Taking longer than usual</h2>
+          <p className="text-sm text-gray-600 mt-2">{error}</p>
+          <div className="flex gap-3 mt-5">
+            <Button
+              type="button"
+              className="bg-blue-600 hover:bg-blue-700"
+              onClick={() => window.location.reload()}
+            >
+              Retry
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate(createPageUrl("RoleSelection"), { replace: true })}
+            >
+              Back
+            </Button>
+          </div>
+        </Card>
       </div>
     );
   }

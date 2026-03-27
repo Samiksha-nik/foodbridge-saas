@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import * as authApi from "@/api/authApi";
 import { useAuth } from "@/lib/AuthContext";
@@ -29,10 +29,8 @@ export default function OTPVerification() {
 
   const email = location.state?.email || authApi.getPendingVerifyEmail() || "";
 
-  useEffect(() => {
-    if (!email) return;
-    checkUserAuth().catch(() => {});
-  }, [email, checkUserAuth]);
+  // Don't auto-call /me on this page; it causes 401 spam and can hang on cold starts.
+  // We only refresh auth state after a successful OTP verification.
 
   const handleVerify = async (e) => {
     e.preventDefault();
