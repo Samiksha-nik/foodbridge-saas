@@ -3,7 +3,9 @@
  * If EMAIL_USER / EMAIL_PASS are not set, logs OTP to console (dev mode).
  */
 
-let transporter = null;
+// undefined = not initialized yet
+// null = initialized but disabled (missing env / failed to create)
+let transporter;
 
 function getTransporter() {
   if (transporter !== undefined) return transporter;
